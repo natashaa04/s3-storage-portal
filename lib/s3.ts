@@ -7,6 +7,11 @@ type PresignResponse = {
   fields: Record<string, string>;
   key: string;
 };
+export type S3File = {
+  key: string;
+  size: number;
+  lastModified?: string;
+};
 
 export async function getPresignedUpload(fileName: string, folder?: string) {
   const { data } = await axios.post<PresignResponse>(
@@ -26,4 +31,28 @@ export async function uploadFileToS3(file: File, folder = "uploads") {
   await axios.post(url, formData);
 
   return { key, fileName: file.name };
+}
+
+
+export async function listS3Files() {
+  const { data } = await axios.get<{ files: S3File[] }>(
+    `${API_URL}/api/uploads`  
+  );
+  return data.files;
+}
+
+export async function getDownloadUrl(key: string) {
+  const { data } = await axios.get<{ url: string }>(
+    `${API_URL}/api/uploads/download`,
+    { params: { key } }
+  );
+  return data.url;
+}
+
+export async function deleteS3File(key: string) {
+  const { data } = await axios.delete<{ key: string; deleted: boolean }>(
+    `${API_URL}/api/uploads`,
+    { params: { key } }
+  );
+  return data;
 }
