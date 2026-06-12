@@ -56,8 +56,8 @@ export default function UploadPanel() {
     setStatus(`Uploading ${file.name}...`);
 
     try {
-      const result = await uploadFileToS3(file);
-      setStatus(`Uploaded successfully: ${result.key}`);
+      const key = await uploadFileToS3(file);
+      setStatus(`Uploaded successfully: ${key}`);
       setFile(null);
 
       if (fileInputRef.current) fileInputRef.current.value = "";
